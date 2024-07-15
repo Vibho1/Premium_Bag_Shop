@@ -1,10 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const isLoggedIn = require('../middlewares/isLoggedIn');
+const product_model = require('../models/product_model');
 
 router.get("/", (req, res) => {
-    // Here, you could fetch or determine any error messages to pass
-    const error = req.query.error || ''; // Or any logic to determine the error
+    let error = req.flash("error");
     res.render("index", { error });
 });
+
+router.get("/shop", isLoggedIn, async (req, res) => {
+    let products = await product_model.find();
+    res.render("shop", {products});
+})
+
+router.get("/logout", isLoggedIn, (req, res) => {
+    res.render("shop");
+})
 
 module.exports = router;
